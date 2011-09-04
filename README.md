@@ -14,5 +14,10 @@ Do not require registration and login. As a result of work y
 Users can specify their custom data structure that will be visualized on MFCS. Project could have some Wiki
 associated for work with text descriptions of classified structures.
 
-[Vaadin]:   http://vaadin.com   "Vaadin"
-[Mongo]:    http://mongodb.org  "Mongo"
+More details about the project can be found on [Wiki][] also you may have a look at the [installed application][Www]
+it has Demo account so you may try it.
+
+[Vaadin]:   http://vaadin.com                               "Vaadin"
+[Mongo]:    http://mongodb.org                              "Mongo"
+[Wiki]:     https://github.com/smeagol74/mfcs-tools/wiki    "Wiki"
+[Www]:      http://mfcs.hitsoft-it.com                      "Www"
