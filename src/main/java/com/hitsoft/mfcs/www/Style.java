@@ -118,22 +118,13 @@ public class Style {
 
     public static List<StyleRec> process(HttpServletRequest request) {
         List<StyleRec> res = new ArrayList<StyleRec>();
-        String strMaxWidth = request.getParameter("maxWidth");
-        int maxWidth = 1;
-        if (strMaxWidth != null) {
-            try {
-                maxWidth = Integer.parseInt(strMaxWidth);
-            } catch (NumberFormatException e) {
-                maxWidth = 1;
-            }
-        }
-        for (int i = 1; i <= maxWidth; i++) {
+        TableModel model = TableModel.getFromRequest(request);
+
+        for (int i = 1; i <= model.maxWidth; i++) {
             for (Side side : Side.values()) {
                 res.add(StyleRec.applyFrame(side, i));
             }
         }
-
-        TableModel model = TableModel.getFromRequest(request);
 
         for (TableModel.Row row : model.rows) {
             for (TableModel.Cell cell : row.cells) {
