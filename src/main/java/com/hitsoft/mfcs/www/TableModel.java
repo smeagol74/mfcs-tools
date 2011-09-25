@@ -34,6 +34,7 @@ public class TableModel {
         public boolean isHeader = false;
         public Mfcs.Category headerCategory = null;
         public boolean isCorner = false;
+        public String rawStyle = "";
 
         public String styleClass() {
             StringBuilder sb = new StringBuilder();
@@ -133,6 +134,7 @@ public class TableModel {
     public int bottomHeadersCount = 0;
 
     public List<Row> rows = new ArrayList<Row>();
+    public List<Row> legend = new ArrayList<Row>();
 
     public void setToRequest(HttpServletRequest request) {
         request.getSession().setAttribute(TableModel.class.getName(), this);
@@ -145,6 +147,12 @@ public class TableModel {
     public Row addRow() {
         Row res = new Row();
         rows.add(res);
+        return res;
+    }
+
+    public Row addLegend() {
+        Row res = new Row();
+        legend.add(res);
         return res;
     }
 }

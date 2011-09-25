@@ -14,6 +14,8 @@ import java.util.List;
  */
 public class Style {
 
+    public static final String LEGEND_TITLE = "legend_title";
+
     public static enum Side {
         LEFT("l", "left"),
         TOP("t", "top"),

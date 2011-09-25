@@ -36,7 +36,7 @@ public class Mfcs {
         public int index;
         public String key;
         public String name;
-        private List<Value> values = new ArrayList<Value>();
+        public List<Value> values = new ArrayList<Value>();
         public int weight = 1;
         public Color baseColor = null;
 
@@ -48,7 +48,7 @@ public class Mfcs {
         }
 
         public Value addValue(String value) {
-            return addValue(value, value);
+            return addValue("" + values.size(), value);
         }
 
         public Value addValue(String key, String value) {
@@ -114,7 +114,7 @@ public class Mfcs {
                     TableModel.Cell cell = new TableModel.Cell();
                     cell.colSpan = 1;
                     cell.rowSpan = 1;
-                    cell.data = value.value;
+                    cell.data = String.format("%s%s", category.key, value.key);
                     cell.isVisible = true;
                     cell.isHeader = true;
                     cell.headerCategory = category;
@@ -231,7 +231,58 @@ public class Mfcs {
 
         updateCellsData(model);
 
+        addLegend(model);
+
         model.setToRequest(request);
+    }
+
+    private void addLegend(TableModel model) {
+        TableModel.Row row = model.addLegend();
+        TableModel.Cell cell = row.addCell();
+        cell.colSpan = 3;
+        cell.style = "th";
+        cell.data = model.title;
+        for (Category cat : categories) {
+            row = model.addLegend();
+            cell = row.addCell();
+            cell.style = "th";
+            cell.rawStyle = renderLegendStyle(cat.baseColor);
+            cell.data = cat.key;
+            cell = row.addCell();
+            cell.style = "th";
+            cell.rawStyle = renderLegendStyle(cat.baseColor);
+            cell.data = cat.name;
+            cell.colSpan = 2;
+            for (Value val : cat.values) {
+                row = model.addLegend();
+                cell = row.addCell();
+                cell.data = "";
+                cell.rawStyle = renderLegendStyle(val.color);
+                cell = row.addCell();
+                cell.data = val.key;
+                cell.rawStyle = renderLegendStyle(val.color);
+                cell = row.addCell();
+                cell.data = val.value;
+                cell.rawStyle = renderLegendStyle(val.color);
+            }
+        }
+        for (TableModel.Row r : model.legend) {
+            for (TableModel.Cell c : r.cells) {
+                c.frame.put(Style.Side.LEFT, 1);
+                c.frame.put(Style.Side.TOP, 1);
+                c.frame.put(Style.Side.RIGHT, 1);
+                c.frame.put(Style.Side.BOTTOM, 1);
+                c.isVisible = true;
+            }
+        }
+    }
+
+    private String renderLegendStyle(Color color) {
+        String result = "";
+        if (color != null) {
+            result = String.format("background: #%6x; border: 1px solid;", color.getRGB() - 0xff000000);
+        }
+        return result;
     }
 
     private List<Header> setupHeaders() {
