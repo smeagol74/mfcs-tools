@@ -2,109 +2,61 @@ package com.hitsoft.mfcs.vaadin;
 
 import com.google.code.morphia.logging.MorphiaLoggerFactory;
 import com.google.code.morphia.logging.slf4j.SLF4JLogrImplFactory;
-import com.hitsoft.mfcs.model.Mfcs;
+import com.hitsoft.mfcs.vaadin.view.Index;
+import com.hitsoft.mfcs.vaadin.view.SimpleMfcs;
 import com.vaadin.Application;
-import com.vaadin.terminal.ExternalResource;
-import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Window;
+import eu.livotov.tpt.TPTApplication;
+import eu.livotov.tpt.gui.widgets.TPTMultiView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 
 /**
  * The Application's "main" class
  */
 @SuppressWarnings("serial")
-public class MfcsApplication extends Application implements HttpServletRequestListener {
-    private Window window = null;
+public class MfcsApplication extends TPTApplication {
 
-    private HttpServletRequest request = null;
+    public HttpServletRequest request = null;
+    public TPTMultiView mvController = null;
 
     @Override
-    public void init() {
-        window = new Window("My Vaadin Application");
+    public void applicationInit() {
+        Window window = new Window("My Vaadin Application");
         setMainWindow(window);
-        Button button = new Button("Click Me");
-        button.addListener(new Button.ClickListener() {
-            public void buttonClick(ClickEvent event) {
 
-                Mfcs.Category cat;
-                Mfcs mfcs = new Mfcs("Проверка");
+        mvController = new TPTMultiView(true);
+        window.setContent(mvController);
+        mvController.setSizeFull();
 
-                cat = mfcs.addCategory("T", "Тип хвоста", new Color(0xa7cbd7));
-                cat.addValue("0", "Нету");
-                cat.addValue("1", "Длинный голый");
-                cat.addValue("2", "Короткий волосатый");
+        mvController.addView(Index.VIEW, new Index(this));
+        mvController.addView(SimpleMfcs.VIEW, new SimpleMfcs());
 
-                cat = mfcs.addCategory("W", "Наличие крыльев", new Color(0xc1acdb));
-                cat.addValue("Y", "Есть");
-                cat.addValue("N", "Нет");
-
-                cat = mfcs.addCategory("H", "Количество голов", new Color(0xf4efbb));
-                cat.addValue("1");
-                cat.addValue("2");
-                cat.addValue("3");
-                cat.addValue("4");
-                cat.addValue("15");
-                cat.addValue("150");
-
-                cat = mfcs.addCategory("S", "Покров", new Color(0xf4d8bb));
-                cat.addValue("0", "Кожа");
-                cat.addValue("1", "Чешуя");
-                cat.addValue("2", "Шерсть");
-
-                cat = mfcs.addCategory("F", "Зубы", null);
-                cat.addValue("Y", "Есть");
-                cat.addValue("N", "Нет");
-
-                cat = mfcs.addCategory("E", "Глаза", null);
-                cat.addValue("0", "Нет");
-                cat.addValue("1", "1");
-                cat.addValue("2", "2");
-
-                cat = mfcs.addCategory("F", "Дыхание", null);
-                cat.addValue("L", "Лёгкие");
-                cat.addValue("Z", "Жабры");
-
-                cat = mfcs.addCategory("A", "A", null);
-                cat.addValue("a0", "A0");
-                cat.addValue("a1", "A1");
-
-                cat = mfcs.addCategory("B", "B", null);
-                cat.addValue("b0", "B0");
-                cat.addValue("b1", "B1");
-
-                cat = mfcs.addCategory("C", "C", null);
-                cat.addValue("c0", "C0");
-                cat.addValue("c1", "C1");
-
-                cat = mfcs.addCategory("D", "D", null);
-                cat.addValue("d0", "D0");
-                cat.addValue("d1", "D1");
-
-                mfcs.renderToRequest(request);
-
-                window.open(new ExternalResource("/table.jsp"), "_blank");
-                window.addComponent(new Label("Thank you for clicking"));
-            }
-        });
-        window.addComponent(button);
-
+        mvController.switchView(Index.VIEW);
     }
 
-    public void onRequestStart(HttpServletRequest request, HttpServletResponse response) {
-        this.request = request;
+    @Override
+    public void firstApplicationStartup() {
+        // Do nothing
     }
 
-    public void onRequestEnd(HttpServletRequest request, HttpServletResponse response) {
+    @Override
+    public void transactionStart(Application application, Object o) {
+        super.transactionStart(application, o);
+        this.request = (HttpServletRequest) o;
+    }
+
+    @Override
+    public void transactionEnd(Application application, Object o) {
+        super.transactionEnd(application, o);
         this.request = null;
     }
 
     static {
         MorphiaLoggerFactory.registerLogger(SLF4JLogrImplFactory.class);
+    }
+
+    public static MfcsApplication app() {
+        return (MfcsApplication) TPTApplication.getCurrentApplication();
     }
 }
